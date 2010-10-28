@@ -25,9 +25,14 @@ Todos.TaskDataSource = SC.DataSource.extend(
   fetch: function(store, query) {
  
 		if (query === Todos.TASKS_QUERY) {
-		  SC.Request.getUrl('/tasks').header({'Accept': 'application/json'}).json()
-		    .notify(this, 'didFetchTasks', store, query)
-		    .send();
+
+      var params = {};
+      params[gadgets.io.RequestParameters.REFRESH_INTERVAL] = 1;
+      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+      var thisObject = this;
+      gadgets.io.makeRequest('http://todos.demo.sproutcore.com/tasks', function(response) {
+        thisObject.didFetchTasks(response,store,query);
+      }, params);
 		  return YES;
 		} 
 		return NO;
@@ -48,12 +53,14 @@ Todos.TaskDataSource = SC.DataSource.extend(
   retrieveRecord: function(store, storeKey) {
 		if (SC.kindOf(store.recordTypeFor(storeKey), Todos.Task)) {
 	 
-		  var url = store.idFor(storeKey);
-		  SC.Request.getUrl(url).header({
-		              'Accept': 'application/json'
-		          }).json()
-		    .notify(this, 'didRetrieveTask', store, storeKey)
-		    .send();
+      var url = store.idFor(storeKey);
+      var params = {};
+      params[gadgets.io.RequestParameters.REFRESH_INTERVAL] = 1;
+      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+      var thisObject = this;
+      gadgets.io.makeRequest('http://todos.demo.sproutcore.com' + url, function(response) {
+        thisObject.didRetrieveTask(response,store,storeKey);
+      }, params);
 		  return YES;
 	 
 		} else return NO;
@@ -70,11 +77,15 @@ Todos.TaskDataSource = SC.DataSource.extend(
 	createRecord: function(store, storeKey) {
 		if (SC.kindOf(store.recordTypeFor(storeKey), Todos.Task)) {
 		  
-		  SC.Request.postUrl('/tasks').header({
-		              'Accept': 'application/json'
-		          }).json()
-		    .notify(this, this.didCreateTask, store, storeKey)
-		    .send(store.readDataHash(storeKey));
+      var params = {};
+      params[gadgets.io.RequestParameters.REFRESH_INTERVAL] = 1;
+      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+      params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
+      params[gadgets.io.RequestParameters.POST_DATA] = gadgets.json.stringify(store.readDataHash(storeKey));
+      var thisObject = this;
+      gadgets.io.makeRequest('http://todos.demo.sproutcore.com/tasks', function(response) {
+        thisObject.didCreateTask(response,store,storeKey);
+      }, params);
 		  return YES;
 	 
 		} else return NO;
@@ -94,12 +105,17 @@ Todos.TaskDataSource = SC.DataSource.extend(
   
   updateRecord: function(store, storeKey) {
 		if (SC.kindOf(store.recordTypeFor(storeKey), Todos.Task)) {
-		  SC.Request.putUrl(store.idFor(storeKey)).header({
-		              'Accept': 'application/json'
-		          }).json()
-		    .notify(this, this.didUpdateTask, store, storeKey)
-		    .send(store.readDataHash(storeKey));
-		  return YES;
+		  var url = store.idFor(storeKey);
+		  var params = {};
+      params[gadgets.io.RequestParameters.REFRESH_INTERVAL] = 1;
+      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+      params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.PUT;
+      params[gadgets.io.RequestParameters.POST_DATA] = gadgets.json.stringify(store.readDataHash(storeKey));
+      var thisObject = this;
+      gadgets.io.makeRequest('http://todos.demo.sproutcore.com' + url, function(response) {
+        thisObject.didUpdateTask(response,store,storeKey);
+      }, params);
+      return YES;
 		  
 		} else return NO ;
 	},
@@ -114,12 +130,16 @@ Todos.TaskDataSource = SC.DataSource.extend(
   
 	destroyRecord: function(store, storeKey) {
 		if (SC.kindOf(store.recordTypeFor(storeKey), Todos.Task)) {
-		  SC.Request.deleteUrl(store.idFor(storeKey)).header({
-		              'Accept': 'application/json'
-		          }).json()
-		    .notify(this, this.didDestroyTask, store, storeKey)
-		    .send();
-		  return YES;
+      var url = store.idFor(storeKey);
+      var params = {};
+      params[gadgets.io.RequestParameters.REFRESH_INTERVAL] = 1;
+      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+      params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.DELETE;
+      var thisObject = this;
+      gadgets.io.makeRequest('http://todos.demo.sproutcore.com' + url, function(response) {
+        thisObject.didDestroyTask(response,store,storeKey);
+      }, params);
+      return YES;
 		  
 		} else return NO;
 	},
