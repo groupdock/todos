@@ -24,8 +24,7 @@ Todos.main = function main() {
 
   // TODO: Set the content property on your primary controller
   // ex: Todos.contactsController.set('content',Todos.contacts);
-	var query = SC.Query.local(Todos.Task, { orderBy: 'isDone,description' });
-	var tasks = Todos.store.find(query);
+	var tasks = Todos.store.find(Todos.TASKS_QUERY);
 	Todos.tasksController.set('content', tasks);  
 
 } ;
