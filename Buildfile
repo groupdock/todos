@@ -3,7 +3,10 @@
 # Copyright: ©2010 My Company, Inc.
 # ===========================================================================
 
-# Add initial buildfile information here
-config :all, :required => :sproutcore
+config :all, :required => :sproutcore do |c|
+  c[:resources_relative] = true
+  c[:url_prefix] = 'http://localhost:4020'
+  c[:layout] = 'index.rhtml'
+end
 
 proxy '/tasks', :to => 'todos.demo.sproutcore.com'
